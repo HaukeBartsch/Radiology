@@ -4,7 +4,7 @@ extends Node3D
 var current_card = null
 var highlighted = false
 
-func highlight(highlight):
+func SetHighlight(highlight):
 	if highlight:
 		#print("Highlighted region")
 		var imported_resource = load("res://Images Raw/frame_highlighted.png")
@@ -71,7 +71,7 @@ func doDrop(card):
 			for need in needs:
 				if "fulfilled" in need:
 					need.erase('fulfilled')
-			highlight(false)
+			SetHighlight(false)
 	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

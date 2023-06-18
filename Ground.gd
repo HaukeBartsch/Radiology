@@ -3,6 +3,7 @@ extends StaticBody3D
 const card_scene = preload("res://card.tscn")
 
 var do_do_appears = true
+@export var paused = false
 
 var card_setup = {
 	"title": "Radiology",
@@ -639,7 +640,8 @@ func perform_card_action(this_card, todo):
 		var all_cards = get_tree().get_nodes_in_group("cards")
 		for c in all_cards:
 			#print("title: " + c.get_node("card").title + " title: " + card_name);
-			if c.get_node("card") and c.get_node("card").title == card_name:
+			if is_instance_valid(c) and c.has_node("card") and c.get_node("card").title == card_name:
+				# is_instance_valid(c.get_node("card")) and c.get_node("card").title == card_name:
 				card = c
 				found = true
 			pass
@@ -671,7 +673,9 @@ func perform_card_action(this_card, todo):
 			var pack = {};
 			if "package" in this_card.card_template:
 				pack = this_card.card_template.package;
-			if is_instance_valid(card):
+			if is_instance_valid(card) and card.has_node("card"):
+				if !target_variable in card.get_node("card").card_template.variables:
+					print("something wrong here! The card " + this_card.title + " tries to add variable " + target_variable + " to "+ card.get_node("card").title)
 				card.get_node("card").card_template.variables[target_variable].append(pack);
 				print("variable " + card_name + " " + target_variable + " has now value " + str(card.get_node("card").card_template.variables[target_variable]))
 				card.get_node("card").update_card();
@@ -766,7 +770,7 @@ func get_pos_close_to_location(proposed_aabb):
 		#if obj2 != null:
 		#	var bbox_aabb = get_aabb_global_endpoints(obj2)
 		#	pass
-		if !is_instance_valid(card):
+		if !is_instance_valid(card) or !card.has_node("card") or !card.has_node("card/MeshInstance3D"):
 			continue
 		var obj = card.get_node("card/MeshInstance3D")
 		# why would this be empty??
@@ -851,6 +855,19 @@ func create_card_from_template(card_template):
 	card.get_node("card").input_package = {};
 		
 	return card
+
+func _unhandled_input(event):
+	if Input.is_action_just_released("toggle_pause"):
+		var cards = get_tree().get_nodes_in_group("cards")
+		if !paused:
+			for card in cards:
+				if is_instance_valid(card) and is_instance_valid(card.get_node("card")):
+					card.get_node("card").pause()
+		else:
+			for card in cards:
+				if is_instance_valid(card) and is_instance_valid(card.get_node("card")):
+					card.get_node("card").unpause()
+		paused = !paused
 
 #func _input_event(camera, event, pos, normal, shape):	
 #	if event is InputEventMouseButton:

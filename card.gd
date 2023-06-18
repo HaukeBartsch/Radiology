@@ -32,7 +32,17 @@ func _ready():
 		tween.tween_property($ProgressBar, "scale:x", 0.0, 1.0).set_delay(0.01)
 		tween.tween_callback(card_create)
 		tween.tween_property($ProgressBar, "scale:x", 1.0, 0)
+		# we need to pause this card in case the game is paused
+		if get_tree().get_root().get_node("Node3D/Ground").paused:
+			pause()
 
+func pause():
+	if is_instance_valid(tween):
+		tween.pause()
+
+func unpause():
+	if is_instance_valid(tween):
+		tween.play()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -40,6 +50,13 @@ func _process(delta):
 		LastPressedTime = max(0, LastPressedTime - delta)
 		if (LastPressedTime == 0):
 			OnSingleClick()
+	# print the remaining seconds on the bar
+	var t = tween.get_total_elapsed_time()*card_template.duration
+	while (t > card_template.duration):
+		t -= card_template.duration
+	if card_template.duration > 0:
+		$TimerText.text = "%.01f sec" % [card_template.duration - t]
+
 
 func OnSingleClick():
 	# show the dialog window
@@ -113,11 +130,11 @@ func _physics_process(delta):
 					# check if we can use the current object's title
 					# should we highlight?
 					if GUIPanel3D.isCompatibleWithCurrent(self): 
-						GUIPanel3D.highlight(true)
+						GUIPanel3D.SetHighlight(true)
 			else:
-				GUIPanel3D.highlight(false)
+				GUIPanel3D.SetHighlight(false)
 		else:
-			GUIPanel3D.highlight(false)
+			GUIPanel3D.SetHighlight(false)
 	else:
 		var velocity = Vector3(0,0,0);
 		velocity.y += delta * GRAVITY;
@@ -152,11 +169,12 @@ func _input_event(_camera, _event, _pos, _normal, _shape):
 		if not $click_timer.is_stopped():
 			# a single release right after a click (in less than 0.4 sec)
 			selected = false
-			GUIPanel3D.highlight(false)
+			GUIPanel3D.SetHighlight(false)
 			$click_timer.stop()
 			# LastPressedTime = 0
 			# toggle the window on
 			OnSingleClick()
+
 	#if Input.is_action_just_pressed("click_card") and event.double_click:
 	#	# show the dialog for this card
 	#	ground_reference.show_window(description);
