@@ -1,0 +1,85 @@
+[gd_scene load_steps=7 format=3 uid="uid://bmr5hllykcbjy"]
+
+[ext_resource type="Script" path="res://card.gd" id="1_xobx2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_prq6v"]
+size = Vector3(0.06, 0.005, 0.08)
+
+[sub_resource type="ImageTexture" id="ImageTexture_3ftfe"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b6v76"]
+diffuse_mode = 3
+albedo_color = Color(0, 0.596078, 0.94902, 1)
+roughness = 0.02
+clearcoat_enabled = true
+clearcoat_texture = SubResource("ImageTexture_3ftfe")
+anisotropy = 0.16
+ao_enabled = true
+ao_light_affect = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_7u5sk"]
+material = SubResource("StandardMaterial3D_b6v76")
+size = Vector3(0.06, 0.003, 0.08)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jx2k5"]
+size = Vector2(0.06, 0.008)
+center_offset = Vector3(2.08165e-12, 0.001, 0.035)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="card" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.000429381, 0)
+input_capture_on_drag = true
+script = ExtResource("1_xobx2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="card"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00233323, 0)
+shape = SubResource("BoxShape3D_prq6v")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="card"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00132187, 0)
+mesh = SubResource("BoxMesh_7u5sk")
+
+[node name="ProgressBar" type="MeshInstance3D" parent="card"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00349643, 0)
+mesh = SubResource("PlaneMesh_jx2k5")
+
+[node name="Sprite3D" type="Sprite3D" parent="card"]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 3.39711e-05, 0.00342792, -0.00735805)
+offset = Vector2(2.08165e-12, 0.02)
+axis = 1
+
+[node name="Label3D" type="Label3D" parent="card"]
+transform = Transform3D(0.1, -6.97574e-17, -1.5246e-24, -1.5246e-24, -4.37114e-09, 0.1, -6.97574e-17, -0.1, -4.37114e-09, -0.000312048, 0.00369319, 0.0231396)
+outline_modulate = Color(0.176471, 0.176471, 0.176471, 1)
+text = "Order"
+font_size = 10
+outline_size = 4
+
+[node name="Node3D" type="Node3D" parent="card"]
+
+[node name="Variable01" type="Label3D" parent="card/Node3D"]
+transform = Transform3D(0.1, -6.97574e-17, -1.5246e-24, -1.5246e-24, -4.37114e-09, 0.1, -6.97574e-17, -0.1, -4.37114e-09, 0.0260912, 0.00321728, -0.036)
+text = "
+"
+font_size = 12
+outline_size = 6
+horizontal_alignment = 2
+
+[node name="Variable02" type="Label3D" parent="card/Node3D"]
+transform = Transform3D(0.1, -1.04636e-16, -4.57379e-24, 0, -4.37114e-09, 0.1, -1.04636e-16, -0.1, -4.37114e-09, 0.0264023, 0.00349046, -0.0278352)
+font_size = 12
+outline_size = 6
+horizontal_alignment = 2
+
+[node name="Variable03" type="Label3D" parent="card/Node3D"]
+transform = Transform3D(0.1, -6.97574e-17, -1.5246e-24, -1.5246e-24, -4.37114e-09, 0.1, -6.97574e-17, -0.1, -4.37114e-09, 0.026049, 0.0032813, -0.0190224)
+font_size = 12
+outline_size = 6
+horizontal_alignment = 2
+
+[node name="click_timer" type="Timer" parent="card"]
+wait_time = 0.4
+one_shot = true
+
+[connection signal="timeout" from="card/click_timer" to="card" method="_on_click_timer_timeout"]
