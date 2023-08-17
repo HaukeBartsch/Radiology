@@ -1,0 +1,8 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://drtj5r45t6dgi"]
+
+[ext_resource type="FontFile" uid="uid://di5qwwdwkblvy" path="res://Roboto+Condensed.ttf" id="1_k4160"]
+
+[resource]
+resource_local_to_scene = true
+default_font = ExtResource("1_k4160")
+default_font_size = 10

@@ -5,6 +5,9 @@ const card_scene = preload("res://card.tscn")
 var do_do_appears = true
 @export var paused = false
 
+# TODO: If a report does not have a number of 0 it should not disappear. Like Images it should 
+#       come back but immediately.
+
 var card_setup = {
 	"title": "Radiology",
 	"description": "A game of clinical radiology imaging",
@@ -13,12 +16,12 @@ var card_setup = {
 			"name": "Population",
 			# we will assume that the first entry is the start card
 			"texture": [ "res://Images/020.png" ],
-			"duration": 10, # in seconds
+			"duration": 10, # in seconds for auto_generates
 			"description": "All your people. They may become ill and need to see a general practitioner.",
 			"auto_generates": [ [ "Condition:create:" ] ], # if we want to delete the card say "destroy"
 			"variables": {},
 			"create_on_ready": true,
-			"position": [-0.1, -0.1],
+			"position": [-0.05, -0.05],
 			"package": [
 				# information added to each generated output (meta-data)
 				# pick one of the packages at random
@@ -31,7 +34,7 @@ var card_setup = {
 			"texture": [ "res://Images/012.png","res://Images/013.png","res://Images/014.png","res://Images/015.png","res://Images/016.png","res://Images/017.png","res://Images/018.png","res://Images/019.png"],
 			"duration": 18, # in seconds
 			"description": "You have a person with some complain. They should go to a general practitioner, or to the emergency department.",
-			"auto_generates": [ [ "BadStuff:add_one:disabled", ":delete:" ] ], # if we want to delete the card say "destroy"
+			"auto_generates": [ [ "UntreatedCondition:add_one:disabled", ":delete:" ] ], # if we want to delete the card say "destroy"
 			"variables": {},
 			"position": [-0.05, -0.05],
 			"package": [
@@ -39,24 +42,12 @@ var card_setup = {
 			]
 		},
 		{
-			"name": "BadStuff",
+			"name": "UntreatedCondition",
 			# we will assume that the first entry is the start card
 			"texture": [ "res://Images/012.png","res://Images/013.png","res://Images/014.png","res://Images/015.png","res://Images/016.png","res://Images/017.png","res://Images/018.png","res://Images/019.png"],
 			"duration": 0, # in seconds
+			"color": [0.9, 0.4, 0.4],
 			"description": "Bad stuff happend. This should count against your overall population health.",
-			"auto_generates": [ ], # if we want to delete the card say "destroy"
-			"variables": { "disabled": [] },
-			"position": [-0.05, -0.05],
-			"package": [
-				{ "Disease": "arthritis" }, { "Disease": "migranes" }, { "Disease": "long covid" }
-			]
-		},
-		{
-			"name": "WrongDiagnosis",
-			# we will assume that the first entry is the start card
-			"texture": [ "res://Images/012.png","res://Images/013.png","res://Images/014.png","res://Images/015.png","res://Images/016.png","res://Images/017.png","res://Images/018.png","res://Images/019.png"],
-			"duration": 0, # in seconds
-			"description": "Bad stuff happend. The GP could not find out what is wrong.",
 			"auto_generates": [ ], # if we want to delete the card say "destroy"
 			"variables": { "disabled": [] },
 			"position": [-0.05, -0.05],
@@ -68,19 +59,42 @@ var card_setup = {
 			"name": "GP",
 			# we will assume that the first entry is the start card
 			"texture": ["res://Images/003.png"],
-			"duration": 20, # in seconds
-			"description": "A general practitioner that might require imaging services. It needs a condition.",
-			"auto_generates": [ [ "WrongDiagnosis:add_one:disabled" ] ], # if we want to delete the card say "destroy"
+			"duration": 20, # in seconds, for bad stuff
+			"description": "A general practitioner that might require imaging services. He/she will treat a condition.",
+			"auto_generates": [ [ "NothingToDo:add_one:disabled" ] ], # if we want to delete the card say "destroy"
 			"variables": { "patient": [] },
+			"color": [0.4, 0.9, 0.4],
 			"position": [0.0, 0.1],
 			"create_on_ready": true,
 			"package": [
 				{ "OrderText": "US" }, { "OrderText": "MRI" }, { "OrderText": "CT" }
 			],
 			"needs": [
-				{ "name": "Condition" }
+				{ "name": "Condition",
+				"needs_generates": [ "Order:create:", "GP:add_one:patient", "GP:reset:0" ],
+				"time": 2
+				},
+				{ "name": "Report",
+				"needs_generates": [ "GP:remove_one:patient", "GP:reset:0" ],
+				"time": 2
+				}
 			],
-			"needs_generates": [ "Order:create:" ]
+			"needs_generates": [ ]
+			
+		},
+		{
+			"name": "NothingToDo",
+			# we will assume that the first entry is the start card
+			"texture": [ "res://Images/012.png","res://Images/013.png","res://Images/014.png","res://Images/015.png","res://Images/016.png","res://Images/017.png","res://Images/018.png","res://Images/019.png"],
+			"duration": 0, # in seconds
+			"color": [0.9, 0.4, 0.4],
+			"description": "GP bad stuff. The GP has nothing to do and goes fishing. This should count against your overall population health.",
+			"auto_generates": [ ], # if we want to delete the card say "destroy"
+			"variables": { "disabled": [] },
+			"position": [-0.05, -0.05],
+			"package": [
+				{ "Fishing": "nothing" }
+			]
 		},
 		{
 			"name": "Order",
@@ -96,33 +110,153 @@ var card_setup = {
 			]
 		},
 		{
-			"name": "RIS",
-			"texture": ["res://Images/005.png"],
-			"duration": 0, # no tweening, just counting orders
-			"description": "Radiology information system keeps track of all orders. Just counting orders right now.",
-			"auto_generates": [ ],
-			"variables": { "orders": [] },
-			"position": [ 0.1, 0.1 ],
+			"name": "OrderCoder",
+			"texture": ["res://Images/004.png"],
+			"description": "A coder can create a request from an order.",
+			"variables": {},
+			"position": [0, 0],
+			"color": [0.4, 0.9, 0.4],
+			"create_on_exists": [ "Order" ],
 			"package": [
-				{ "AccessionNumber": "1234" }, { "AccessionNumber": "5678" }
+				{ "OrderCode": "ICD-10#1234" }, { "OrderCode": "ICD-10#56789" }
 			],
 			"needs": [
-				{ "name": "Order" }
+				{ "name": "Order",
+				"needs_generates": [ "Request:create:" ],
+				"time": 5
+				}
+			]
+		},
+		{
+			"name": "RequestCoder",
+			"texture": ["res://Images/004.png"],
+			"description": "A coder can create a worklist item from a request.",
+			"variables": {},
+			"position": [0, 0],
+			"color": [0.4, 0.9, 0.4],
+			"create_on_exists": [ "Request" ],
+			"package": [
+				{ "RequestCode": "MR without contrast of the knee" }, { "RequestCode": "CT with contrast of the head" }
 			],
-			"needs_generates": [ "Modality:add_one:studies" ]
+			"needs": [ 
+				{ "name": "Request",
+				"needs_generates": [ "ModalityWorklistItem:create:" ],
+				"time": 5.5
+				}
+			]
+		},
+		{
+			"name": "Request",
+			# we will assume that the first entry is the start card
+			"texture": ["res://Images/004.png"],
+			"duration": 18, # in seconds
+			"description": "A request generated from an order. The request references a service in the hospital.",
+			"auto_generates": [ [ "RIS:add_one:requests", ":delete:" ] ], # if we want to delete the card say "destroy"
+			"variables": {},
+			"position": [0, 0],
+			"package": [
+				{ "RequestCode": "CT of the knee with contrast" }, { "RequestCode": "MRI of the brain with DTI" }
+			]
 		},
 		{
 			"name": "Modality",
 			"texture": ["res://Images/011.png"],
-			"duration": 15, # no tweening, just counting orders
 			"description": "An imaging modality, a machine performing scans ordered by a GP producing image studies.",
-			"auto_generates": [ [ "Study:add_one:studies" ] ],
+			"create_on_exists": [ "ModalityWorklistItem" ],
 			"variables": { "studies": [] },
+			"color": [0.4, 0.9, 0.4],
 			"position": [ 0.1, 0.1 ],
 			"package": [
 				{ "DeviceSeriesNumber": "1234", "Modality": "MR" },
 				{ "DeviceSeriesNumber": "9012", "Modality": "US" },
 				{ "DeviceSeriesNumber": "5678", "Modality": "CT" }
+			],
+			"needs": [
+				{ "name": "ModalityWorklistItem",
+				"needs_generates": [ "Studies:add_one:studies" ],
+				"time": 3
+				}
+			]
+		},
+		{
+			"name": "ModalityWorklistItem",
+			"texture": ["res://Images/011.png"],
+			"duration": 15, # no tweening, just counting orders
+			"description": "An item on a list of open requests for imaging. More than one modality can perform the work.",
+			"auto_generates": [ [ ":delete:" ] ],
+			"variables": { },
+			"position": [ 0.1, 0.1 ],
+			"package": [ ]
+		},
+		{
+			"name": "Studies",
+			"texture": ["res://Images/011.png"],
+			"duration": 15, # no tweening, just counting orders
+			"description": "An item on a list of open requests for imaging. More than one modality can perform the work.",
+			"auto_generates": [ [ "Series:add_one:series" ] ],
+			"variables": { "studies": [] },
+			"position": [ 0.1, 0.1 ],
+			"package": [
+				{ "StudyInstanceUID": "1234.x", "SeriesNumExpected": 1 },
+				{ "StudyInstanceUID": "9012.y", "SeriesNumExpected": 3 },
+				{ "StudyInstanceUID": "5678.z", "SeriesNumExpected": 15 }
+			]
+		},
+		{
+			"name": "Series",
+			"texture": ["res://Images/011.png"],
+			"duration": 2, # no tweening, just counting orders
+			"description": "An item on a list of open requests for imaging. More than one modality can perform the work.",
+			"auto_generates": [ [ "Images:add_one:images" ] ],
+			"variables": { "series": [] },
+			"position": [ 0.1, 0.1 ],
+			"package": [
+				{ "SeriesInstanceUID": "1234.x.t", "InstanceNumExpected": 192 },
+				{ "SeriesInstanceUID": "9012.x.y", "InstanceNumExpected": 3 },
+				{ "SeriesInstanceUID": "5678.x.z", "InstanceNumExpected": 512 }
+			]
+		},
+		{
+			"name": "Images",
+			"texture": ["res://Images/011.png"],
+			"duration": 0, # no tweening, just counting orders
+			"description": "An item on a list of open requests for imaging. More than one modality can perform the work.",
+			"variables": { "images": [] },
+			"position": [ 0.1, 0.1 ],
+			"package": [
+				{ "SOPInstanceUID": "1234.x.t", "FrameNumExpected": 1 },
+				{ "SOPInstanceUID": "9012.x.y", "FrameNumExpected": 1 },
+				{ "SOPInstanceUID": "5678.x.z", "FrameNumExpected": 1 }
+			]
+		},
+		{
+			"name": "Radiologist",
+			"texture": ["res://Images/016.png"],
+			"description": "An expert in reading medical images.",
+			"create_on_exists": [ "Images" ],
+			"variables": { "studies": [] },
+			"color": [0.4, 0.9, 0.4],
+			"position": [ 0.1, 0.1 ],
+			"package": [
+				{ "Report": "This looks good.", "Diagnosis": "ok" },
+				{ "Report": "This looks promissing.", "Diagnosis": "ok" }
+			],
+			"needs": [
+				{ "name": "Images",
+				"needs_generates": [ "Report:add_one:reports" ],
+				"time": 6
+				}
+			]
+		},
+		{
+			"name": "Report",
+			"texture": ["res://Images/016.png"],
+			"description": "An textual description of the images with a diagnosis.",
+			"variables": { "reports": [] },
+			"position": [ 0.1, 0.1 ],
+			"package": [
+				{ "Report": "This looks good.", "Diagnosis": "ok" },
+				{ "Report": "This looks promissing.", "Diagnosis": "ok" }
 			]
 		}
 	]
@@ -544,8 +678,9 @@ func _ready():
 		#var all_cards = get_tree().get_nodes_in_group("cards")
 		#print("number of cards in group is: ", all_cards.size());
 		if card_template.has("create_on_ready") and card_template.create_on_ready:
+			# it seems to be problematic to set the origin of the card before adding it as a child
 			var card = create_card_from_template(card_template)
-			add_child(card);
+			# add_child(card);
 			card.add_to_group("cards")
 			card.get_node("card").input_package = {}
 			var potential_variables = card.get_node("card").card_template.package
@@ -555,6 +690,8 @@ func _ready():
 					card.get_node("card").input_package[key] = picked_variables[key]
 			print(card.get_node("card").input_package)
 	hide_window();
+	OS.low_processor_usage_mode = true
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -615,7 +752,7 @@ func perform_card_action(this_card, todo):
 		for card_template in card_setup.cards:
 			if card_template.name == todo_pieces[0]:
 				var card = create_card_from_template(card_template)
-				add_child(card);
+				#add_child(card);
 				card.add_to_group("cards")  # card.add_to_group("cards");
 				# we should add the this_card.input_package to the 
 				# new cards input_package
@@ -652,7 +789,7 @@ func perform_card_action(this_card, todo):
 			for card_template in card_setup.cards:
 				if card_template.name == card_name:
 					card = create_card_from_template(card_template)
-					add_child(card);
+					#add_child(card);
 					card.add_to_group("cards")  # card.add_to_group("cards");
 					card.get_node("card").input_package = this_card.input_package
 					# we need to use one of the card_template.variables[rand()]
@@ -679,6 +816,21 @@ func perform_card_action(this_card, todo):
 				card.get_node("card").card_template.variables[target_variable].append(pack);
 				print("variable " + card_name + " " + target_variable + " has now value " + str(card.get_node("card").card_template.variables[target_variable]))
 				card.get_node("card").update_card();
+		elif action == "remove_one":
+			var pack = {};
+			if "package" in this_card.card_template:
+				pack = this_card.card_template.package;
+			if is_instance_valid(card) and card.has_node("card"):
+				if !target_variable in card.get_node("card").card_template.variables:
+					print("something wrong here! The card " + this_card.title + " tries to add variable " + target_variable + " to "+ card.get_node("card").title)
+				card.get_node("card").card_template.variables[target_variable].pop_front();
+				print("variable " + card_name + " " + target_variable + " has now value " + str(card.get_node("card").card_template.variables[target_variable]))
+				card.get_node("card").update_card();			
+		elif action == "reset":
+			# reset the tween of todo
+			if found:
+				card.get_node("card").reset_counter(int(target_variable))
+			pass
 		elif action == "create":
 			# create a new card of that type
 			# but this happened already above there
@@ -686,7 +838,7 @@ func perform_card_action(this_card, todo):
 				for card_template in card_setup.cards:
 					if card_template.name == card_name:
 						card = create_card_from_template(card_template)
-						add_child(card);
+						#add_child(card);
 						card.add_to_group("cards")  # card.add_to_group("cards");
 						card.get_node("card").input_package = this_card.input_package
 						var potential_variables = card.get_node("card").card_template.package
@@ -710,6 +862,32 @@ func perform_card_action(this_card, todo):
 	# check if we can create a card based on some rules
 	do_do_appears = true
 	#do_appears()
+	# in case a card has been created we might have some downstream cards that also now appear, lets check for those
+	for card_template in card_setup.cards:
+		if card_template.has("create_on_exists") and card_template.create_on_exists.size() > 0:
+			# do we have all cards?
+			var allCardsThere = true
+			var all_cards = get_tree().get_nodes_in_group("cards")
+			for card_name in card_template.create_on_exists:
+				var found = false
+				for c in all_cards:
+					if is_instance_valid(c) and c.has_node("card") and c.get_node("card").title == card_name:
+						found = true
+						break
+				if !found:
+					allCardsThere = false
+			if allCardsThere:
+				# should be done only once so lets remove the create_on_exists here
+				card_template.erase("create_on_exists")
+				var card = create_card_from_template(card_template)
+				card.add_to_group("cards")
+				card.get_node("card").input_package = {}
+				var potential_variables = card.get_node("card").card_template.package
+				if potential_variables.size() > 0:
+					var picked_variables = potential_variables[randi_range(0,potential_variables.size()-1)]
+					for key in picked_variables.keys():
+						card.get_node("card").input_package[key] = picked_variables[key]
+				print(card.get_node("card").input_package)	
 	pass
 
 func do_appears():
@@ -737,7 +915,7 @@ func do_appears():
 					if foundTarget and not foundThis:
 						# create this card_template
 						var card = create_card_from_template(card_template)
-						add_child(card);
+						#add_child(card);
 						card.add_to_group("cards")  # card.add_to_group("cards");
 						card.get_node("card").input_package = {}
 						var potential_variables = card.get_node("card").card_template.package
@@ -823,7 +1001,9 @@ func create_card_from_template(card_template):
 	card.get_node("card").card_template = card_template;
 	card.get_node("card").title = card_template.name;
 	card.get_node("card").description = card_template.description;
+	card.get_node("card").update_card();
 	#add_child(card);
+	add_child(card);
 	#var nc = card.get_node("card");
 	var create_pos = Vector3(0.1, 0.0, 0.1); #event.pos to Vector2()
 	if card_template.position:
@@ -856,16 +1036,16 @@ func create_card_from_template(card_template):
 		
 	return card
 
-func _unhandled_input(event):
+func _unhandled_input(_event):
 	if Input.is_action_just_released("toggle_pause"):
 		var cards = get_tree().get_nodes_in_group("cards")
 		if !paused:
 			for card in cards:
-				if is_instance_valid(card) and is_instance_valid(card.get_node("card")):
+				if card and is_instance_valid(card) and card.has_node("card"):
 					card.get_node("card").pause()
 		else:
 			for card in cards:
-				if is_instance_valid(card) and is_instance_valid(card.get_node("card")):
+				if is_instance_valid(card) and card.has_node("card"):
 					card.get_node("card").unpause()
 		paused = !paused
 

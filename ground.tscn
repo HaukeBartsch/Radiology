@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bo0kjwd80f3oh"]
+[gd_scene load_steps=21 format=3 uid="uid://bo0kjwd80f3oh"]
 
 [ext_resource type="Script" path="res://Ground.gd" id="1_6rayu"]
 [ext_resource type="Script" path="res://GUIPanel3D.gd" id="2_3ryx5"]
@@ -6,6 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://cbqqj8uxcyb5j" path="res://Images/frame.png" id="3_vr26g"]
 [ext_resource type="Texture2D" uid="uid://bbvr7n5vtucny" path="res://Images/001.png" id="4_3ai2r"]
 [ext_resource type="FontFile" uid="uid://inwv247rg0b2" path="res://AstroSpace-eZ2Bg.ttf" id="4_e5lvf"]
+[ext_resource type="FontFile" uid="uid://di5qwwdwkblvy" path="res://Roboto+Condensed.ttf" id="7_3tikd"]
+[ext_resource type="Theme" uid="uid://drtj5r45t6dgi" path="res://font_theme.tres" id="7_8h3nt"]
+[ext_resource type="Shader" path="res://vignette.gdshader" id="7_pwx57"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_yac54"]
 size = Vector3(2, 0.15, 2)
@@ -32,6 +35,8 @@ tonemap_mode = 2
 tonemap_exposure = 0.9
 tonemap_white = 1.2
 ssao_enabled = true
+ssao_radius = 0.38
+ssao_detail = 0.61
 sdfgi_enabled = true
 glow_bloom = 0.2
 
@@ -56,6 +61,12 @@ albedo_texture = SubResource("ViewportTexture_6p7vy")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mwpb5"]
 size = Vector3(1.47613, 1, 0.01)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v03rd"]
+shader = ExtResource("7_pwx57")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/multiplier = 0.4
+shader_parameter/softness = 0.9
 
 [node name="Node3D" type="Node3D"]
 
@@ -168,18 +179,69 @@ layout_mode = 2
 texture = ExtResource("3_vr26g")
 expand_mode = 3
 
+[node name="RichTextLabel" type="RichTextLabel" parent="GUIPanel3D/SubViewport/Control/Panel/HBoxContainer/frame1"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -20.0
+offset_right = 50.0
+offset_bottom = 20.0
+grow_vertical = 0
+theme = ExtResource("7_8h3nt")
+theme_override_fonts/normal_font = ExtResource("7_3tikd")
+theme_override_font_sizes/normal_font_size = 10
+text = "frame1"
+fit_content = true
+scroll_active = false
+
 [node name="frame2" type="TextureRect" parent="GUIPanel3D/SubViewport/Control/Panel/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("3_vr26g")
 expand_mode = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GUIPanel3D/SubViewport/Control/Panel/HBoxContainer/frame2"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -20.0
+offset_right = 50.0
+offset_bottom = 20.0
+grow_vertical = 0
+theme = ExtResource("7_8h3nt")
+theme_override_fonts/normal_font = ExtResource("7_3tikd")
+theme_override_font_sizes/normal_font_size = 10
+text = "frame2"
+fit_content = true
+scroll_active = false
 
 [node name="frame3" type="TextureRect" parent="GUIPanel3D/SubViewport/Control/Panel/HBoxContainer"]
 layout_mode = 2
 texture = ExtResource("3_vr26g")
 expand_mode = 3
 
+[node name="RichTextLabel" type="RichTextLabel" parent="GUIPanel3D/SubViewport/Control/Panel/HBoxContainer/frame3"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -20.0
+offset_right = 50.0
+offset_bottom = 20.0
+grow_vertical = 0
+theme = ExtResource("7_8h3nt")
+theme_override_fonts/normal_font = ExtResource("7_3tikd")
+theme_override_font_sizes/normal_font_size = 10
+text = "frame3"
+fit_content = true
+scroll_active = false
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="GUIPanel3D"]
-transform = Transform3D(0.15, -5.2318e-17, 5.2318e-17, -5.2318e-17, -6.55671e-09, 0.15, -5.2318e-17, -0.15, -6.55671e-09, 0.171252, 0.0364349, 0.126135)
+transform = Transform3D(0.15, -5.2318e-17, 5.2318e-17, -5.2318e-17, -6.55671e-09, 0.15, -5.2318e-17, -0.15, -6.55671e-09, 0.19624, 0.0364349, 0.116914)
 rotation_order = 1
 gi_lightmap_scale = 1
 mesh = SubResource("QuadMesh_3y8ds")
@@ -191,3 +253,14 @@ input_capture_on_drag = true
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GUIPanel3D/MeshInstance3D/Area3D"]
 transform = Transform3D(1, 2.0926e-22, -2.60657e-22, -2.97961e-22, 1, -1.71953e-14, 2.50975e-22, 2.36056e-14, 1, 0.00368333, 0, 0)
 shape = SubResource("BoxShape3D_mwpb5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_v03rd")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
