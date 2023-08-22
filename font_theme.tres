@@ -5,4 +5,4 @@
 [resource]
 resource_local_to_scene = true
 default_font = ExtResource("1_k4160")
-default_font_size = 14
+default_font_size = 15
