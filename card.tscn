@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://bmr5hllykcbjy"]
+[gd_scene load_steps=9 format=3 uid="uid://bmr5hllykcbjy"]
 
 [ext_resource type="Script" path="res://card.gd" id="1_xobx2"]
+[ext_resource type="FontFile" uid="uid://inwv247rg0b2" path="res://AstroSpace-eZ2Bg.ttf" id="2_ho28w"]
 [ext_resource type="FontFile" uid="uid://di5qwwdwkblvy" path="res://Roboto+Condensed.ttf" id="2_isb08"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_prq6v"]
@@ -55,11 +56,13 @@ offset = Vector2(2.08165e-12, 0.02)
 axis = 1
 
 [node name="Label3D" type="Label3D" parent="card"]
-transform = Transform3D(0.1, -6.97574e-17, -1.5246e-24, -1.5246e-24, -4.37114e-09, 0.1, -6.97574e-17, -0.1, -4.37114e-09, -0.000312048, 0.00369319, 0.0231396)
+transform = Transform3D(0.1, -6.97574e-17, -1.5246e-24, -1.5246e-24, -4.37114e-09, 0.1, -6.97574e-17, -0.1, -4.37114e-09, -0.000312048, 0.00369319, 0.0244336)
+pixel_size = 0.003
 outline_modulate = Color(0.176471, 0.176471, 0.176471, 1)
 text = "Order"
-font_size = 10
-outline_size = 4
+font = ExtResource("2_ho28w")
+font_size = 14
+outline_size = 2
 
 [node name="TimerText" type="Label3D" parent="card"]
 transform = Transform3D(0.05, -3.48787e-17, -7.62298e-25, -7.62298e-25, -2.18557e-09, 0.05, -3.48787e-17, -0.05, -2.18557e-09, 0, 0.00500103, 0.0351453)
@@ -74,9 +77,10 @@ width = 300.0
 
 [node name="Variable01" type="Label3D" parent="card/Node3D"]
 transform = Transform3D(0.1, -6.97574e-17, -1.5246e-24, -1.5246e-24, -4.37114e-09, 0.1, -6.97574e-17, -0.1, -4.37114e-09, 0.0260912, 0.00321728, -0.036)
+pixel_size = 0.003
 text = "
 "
-font_size = 12
+font_size = 14
 outline_size = 6
 horizontal_alignment = 2
 

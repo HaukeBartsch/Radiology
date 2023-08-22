@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bo0kjwd80f3oh"]
+[gd_scene load_steps=20 format=3 uid="uid://bo0kjwd80f3oh"]
 
 [ext_resource type="Script" path="res://Ground.gd" id="1_6rayu"]
 [ext_resource type="Script" path="res://GUIPanel3D.gd" id="2_3ryx5"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://cbqqj8uxcyb5j" path="res://Images/frame.png" id="3_vr26g"]
 [ext_resource type="Texture2D" uid="uid://bbvr7n5vtucny" path="res://Images/001.png" id="4_3ai2r"]
 [ext_resource type="FontFile" uid="uid://inwv247rg0b2" path="res://AstroSpace-eZ2Bg.ttf" id="4_e5lvf"]
-[ext_resource type="FontFile" uid="uid://di5qwwdwkblvy" path="res://Roboto+Condensed.ttf" id="7_3tikd"]
 [ext_resource type="Theme" uid="uid://drtj5r45t6dgi" path="res://font_theme.tres" id="7_8h3nt"]
 [ext_resource type="Shader" path="res://vignette.gdshader" id="7_pwx57"]
 
@@ -86,9 +85,10 @@ light_indirect_energy = 0.258
 shadow_enabled = true
 shadow_bias = 1.0
 shadow_blur = 0.01
-directional_shadow_fade_start = 0.805
-directional_shadow_max_distance = 164.9
-directional_shadow_pancake_size = 0.3
+directional_shadow_mode = 0
+directional_shadow_fade_start = 0.421
+directional_shadow_max_distance = 1.0
+directional_shadow_pancake_size = 5.0
 sky_mode = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -109,36 +109,36 @@ script = ExtResource("2_3ryx5")
 transparent_bg = true
 handle_input_locally = false
 gui_embed_subwindows = true
-size = Vector2i(280, 180)
+size = Vector2i(560, 360)
 render_target_update_mode = 4
 
 [node name="Control" type="Control" parent="GUIPanel3D/SubViewport"]
 custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 280.0
-offset_bottom = 180.0
+offset_right = 560.0
+offset_bottom = 360.0
 
 [node name="Panel" type="Panel" parent="GUIPanel3D/SubViewport/Control"]
 layout_mode = 0
-offset_right = 280.0
-offset_bottom = 180.0
+offset_right = 560.0
+offset_bottom = 360.0
 
 [node name="TextureRect" type="TextureRect" parent="GUIPanel3D/SubViewport/Control/Panel"]
 self_modulate = Color(0.517647, 0.517647, 0.517647, 0.807843)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-offset_right = 280.0
-offset_bottom = 180.0
+offset_right = 560.0
+offset_bottom = 560.0
 texture = ExtResource("3_s7amr")
-expand_mode = 2
+expand_mode = 4
+stretch_mode = 4
 
 [node name="card_logo" type="TextureRect" parent="GUIPanel3D/SubViewport/Control/Panel"]
 self_modulate = Color(1, 1, 1, 0.447059)
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-scale = Vector2(0.6, 0.6)
+offset_right = 560.0
+offset_bottom = 560.0
 texture = ExtResource("4_3ai2r")
 
 [node name="Title" type="Label" parent="GUIPanel3D/SubViewport/Control/Panel"]
@@ -147,6 +147,7 @@ offset_left = 10.0
 offset_top = 5.0
 offset_right = 79.0
 offset_bottom = 31.0
+theme_override_font_sizes/font_size = 24
 text = "Titel text
 "
 
@@ -155,12 +156,12 @@ clip_contents = false
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 offset_left = 10.0
-offset_top = 30.0
-offset_right = 270.0
-offset_bottom = 130.0
+offset_top = 40.0
+offset_right = 570.0
+offset_bottom = 340.0
 size_flags_horizontal = 4
 theme = SubResource("Theme_xymk5")
-theme_override_font_sizes/normal_font_size = 9
+theme_override_font_sizes/normal_font_size = 18
 bbcode_enabled = true
 text = "There is no description for this card.
 
@@ -170,9 +171,9 @@ scroll_following = true
 [node name="HBoxContainer" type="HBoxContainer" parent="GUIPanel3D/SubViewport/Control/Panel"]
 layout_mode = 2
 offset_left = 10.0
-offset_top = 70.0
-offset_right = 290.0
-offset_bottom = 170.0
+offset_top = 150.0
+offset_right = 645.0
+offset_bottom = 350.0
 
 [node name="frame1" type="TextureRect" parent="GUIPanel3D/SubViewport/Control/Panel/HBoxContainer"]
 layout_mode = 2
@@ -184,14 +185,12 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -20.0
-offset_right = 50.0
-offset_bottom = 20.0
+offset_left = 20.0
+offset_top = -30.0
+offset_right = 120.0
+offset_bottom = 30.0
 grow_vertical = 0
 theme = ExtResource("7_8h3nt")
-theme_override_fonts/normal_font = ExtResource("7_3tikd")
-theme_override_font_sizes/normal_font_size = 10
 bbcode_enabled = true
 text = "frame1"
 fit_content = true
@@ -207,14 +206,12 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -20.0
-offset_right = 50.0
-offset_bottom = 20.0
+offset_left = 20.0
+offset_top = -30.0
+offset_right = 60.0
+offset_bottom = 10.0
 grow_vertical = 0
 theme = ExtResource("7_8h3nt")
-theme_override_fonts/normal_font = ExtResource("7_3tikd")
-theme_override_font_sizes/normal_font_size = 10
 text = "frame2"
 fit_content = true
 scroll_active = false
@@ -229,14 +226,12 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -20.0
-offset_right = 50.0
-offset_bottom = 20.0
+offset_left = 20.0
+offset_top = -30.0
+offset_right = 60.0
+offset_bottom = 10.0
 grow_vertical = 0
 theme = ExtResource("7_8h3nt")
-theme_override_fonts/normal_font = ExtResource("7_3tikd")
-theme_override_font_sizes/normal_font_size = 10
 text = "frame3"
 fit_content = true
 scroll_active = false

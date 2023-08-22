@@ -57,8 +57,6 @@ func isHighlighted(need):
 			return highlighted[1]
 		elif need_title == get_node("SubViewport/Control/Panel/HBoxContainer/frame3/RichTextLabel").text:
 			return highlighted[2]
-	else:
-		pass
 	return false
 
 func setCurrentCard(card):
@@ -120,6 +118,8 @@ func doDrop(card):
 						for n in need["needs_generates"]:
 							ground_reference.perform_card_action(current_card, n)
 					need.erase('fulfilled')
+					# maybe wait for the delayed action before disable?
+					SetHighlight(false, need)
 			if not "fulfilled" in need:
 				# any single need not fulfilled will make this whole thing not fulfilled
 				toggle_all_fulfilled = false
