@@ -50,13 +50,16 @@ func isHighlighted(need):
 	# check if that need is highlighted
 	if need != null:
 		var need_title = need["name"]
+		var t = get_node("SubViewport/Control/Panel/HBoxContainer/frame1/RichTextLabel").text
 		if need_title == get_node("SubViewport/Control/Panel/HBoxContainer/frame1/RichTextLabel").text:
 			return highlighted[0]
 		elif need_title == get_node("SubViewport/Control/Panel/HBoxContainer/frame2/RichTextLabel").text:
 			return highlighted[1]
 		elif need_title == get_node("SubViewport/Control/Panel/HBoxContainer/frame3/RichTextLabel").text:
 			return highlighted[2]
-	return highlighted
+	else:
+		pass
+	return false
 
 func setCurrentCard(card):
 	current_card = card

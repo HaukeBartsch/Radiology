@@ -1,5 +1,11 @@
 extends StaticBody3D
 
+# ideas:
+#   - Make output follow some curve and allow user to "adapt" timers.
+#   - Model the deep space network exchanging information with space probes.
+
+# todo: don't accept cards before drop
+
 const card_scene = preload("res://card.tscn")
 
 var do_do_appears = true
