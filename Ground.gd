@@ -50,7 +50,7 @@ var card_setup = {
 		{
 			"name": "UntreatedCondition",
 			# we will assume that the first entry is the start card
-			"texture": [ "res://Images/012.png","res://Images/013.png","res://Images/014.png","res://Images/015.png","res://Images/016.png","res://Images/017.png","res://Images/018.png","res://Images/019.png"],
+			"texture": [ "res://Images/021.png"],
 			"duration": 0, # in seconds
 			"color": [0.9, 0.4, 0.4],
 			"description": "Bad stuff happend. This should count against your overall population health.",
@@ -69,7 +69,7 @@ var card_setup = {
 			"description": "A general practitioner that might require imaging services. He/she will treat a condition.",
 			"auto_generates": [ [ "NothingToDo:add_one:disabled" ] ], # if we want to delete the card say "destroy"
 			"variables": { "patient": [] },
-			"color": [0.4, 0.9, 0.4],
+			"color": [0.172, 0.635, 0.372],
 			"position": [0.0, 0.1],
 			"create_on_ready": true,
 			"package": [
@@ -91,7 +91,7 @@ var card_setup = {
 		{
 			"name": "NothingToDo",
 			# we will assume that the first entry is the start card
-			"texture": [ "res://Images/012.png","res://Images/013.png","res://Images/014.png","res://Images/015.png","res://Images/016.png","res://Images/017.png","res://Images/018.png","res://Images/019.png"],
+			"texture": [ "res://Images/007.png"],
 			"duration": 0, # in seconds
 			"color": [0.9, 0.4, 0.4],
 			"description": "GP bad stuff. The GP has nothing to do and goes fishing. This should count against your overall population health.",
@@ -121,7 +121,7 @@ var card_setup = {
 			"description": "A coder can create a request from an order.",
 			"variables": {},
 			"position": [0, 0],
-			"color": [0.4, 0.9, 0.4],
+			"color": [0.172, 0.635, 0.372],
 			"create_on_exists": [ "Order" ],
 			"package": [
 				{ "OrderCode": "ICD-10#1234" }, { "OrderCode": "ICD-10#56789" }
@@ -139,7 +139,7 @@ var card_setup = {
 			"description": "A coder can create a worklist item from a request.",
 			"variables": {},
 			"position": [0, 0],
-			"color": [0.4, 0.9, 0.4],
+			"color": [0.172, 0.635, 0.372],
 			"create_on_exists": [ "Request" ],
 			"package": [
 				{ "RequestCode": "MR without contrast of the knee" }, { "RequestCode": "CT with contrast of the head" }
@@ -170,7 +170,7 @@ var card_setup = {
 			"description": "An imaging modality, a machine performing scans ordered by a GP producing image studies.",
 			"create_on_exists": [ "ModalityWorklistItem" ],
 			"variables": { "studies": [] },
-			"color": [0.4, 0.9, 0.4],
+			"color": [0.172, 0.635, 0.372],
 			"position": [ 0.1, 0.1 ],
 			"package": [
 				{ "DeviceSeriesNumber": "1234", "Modality": "MR" },
@@ -224,7 +224,7 @@ var card_setup = {
 		},
 		{
 			"name": "Images",
-			"texture": ["res://Images/011.png"],
+			"texture": ["res://Images/009.png"],
 			"duration": 0, # no tweening, just counting orders
 			"description": "An item on a list of open requests for imaging. More than one modality can perform the work.",
 			"variables": { "images": [] },
@@ -237,11 +237,11 @@ var card_setup = {
 		},
 		{
 			"name": "Radiologist",
-			"texture": ["res://Images/016.png"],
+			"texture": ["res://Images/010.png"],
 			"description": "An expert in reading medical images.",
 			"create_on_exists": [ "Images" ],
 			"variables": { "studies": [] },
-			"color": [0.4, 0.9, 0.4],
+			"color": [0.172, 0.635, 0.372],
 			"position": [ 0.1, 0.1 ],
 			"package": [
 				{ "Report": "This looks good.", "Diagnosis": "ok" },
@@ -249,16 +249,16 @@ var card_setup = {
 			],
 			"needs": [
 				{ "name": "Images",
-				"needs_generates": [ "Report:add_one:reports" ],
+				"needs_generates": [ "Report:create:" ],
 				"time": 6
 				}
 			]
 		},
 		{
 			"name": "Report",
-			"texture": ["res://Images/016.png"],
+			"texture": ["res://Images/022.png"],
 			"description": "An textual description of the images with a diagnosis.",
-			"variables": { "reports": [] },
+			"variables": { "evidence": [] },
 			"position": [ 0.1, 0.1 ],
 			"package": [
 				{ "Report": "This looks good.", "Diagnosis": "ok" },
